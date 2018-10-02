@@ -1,0 +1,86 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: ensure motd file is not present
+    file:
+      path: ~/motd
+      state: absent
+
+  - name: ensure check mode state present
+    motd:
+      message: hi mom
+    check_mode: true
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - not lookup('fileglob', '~/motd')
+      - motd_out is changed
+
+  - name: create with message and default state present
+    motd:
+      message: hi mom
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - lookup('file', '~/motd') == 'hi mom'
+      - motd_out is changed
+
+  - name: test idempotent present
+    motd:
+      message: hi mom
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - lookup('file', '~/motd') == 'hi mom'
+      - motd_out is not changed
+
+  - name: test modify present
+    motd:
+      message: hi mom again
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - lookup('file', '~/motd') == 'hi mom again'
+      - motd_out is changed
+
+  - name: ensure check mode state absent
+    motd:
+      state: absent
+    check_mode: true
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - lookup('file', '~/motd') == "hi mom again"
+      - motd_out is changed
+
+  - name: test state absent
+    motd:
+      state: absent
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - not lookup('fileglob', '~/motd')
+      - motd_out is changed
+
+  - name: test idempotent state absent
+    motd:
+      state: absent
+    register: motd_out
+
+  - name: ensure proper output and behavior
+    assert:
+      that:
+      - not lookup('fileglob', '~/motd')
+      - motd_out is not changed

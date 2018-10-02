@@ -1,0 +1,6 @@
+{ "ANSIBLE_MODULE_ARGS": {
+    "message": "hi mom",
+    "state": "present",
+    "_ansible_check_mode": true
+  }
+}

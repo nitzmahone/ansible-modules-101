@@ -1,0 +1,8 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - motd:
+      message: hi mom
+      state: present
+
+
